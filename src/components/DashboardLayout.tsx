@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useWallet } from "@/providers/WalletProvider";
-import { Ship, LayoutDashboard, Settings, LogOut, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Settings, LogOut, ChevronRight } from "lucide-react";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -17,12 +18,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#050508] text-foreground selection:bg-primary/30">
+    <div className="flex min-h-screen bg-[#050508] text-foreground selection:bg-primary/30 font-sans">
       {/* Sidebar */}
       <aside className="w-64 border-r border-white/5 bg-black/40 backdrop-blur-xl hidden md:flex flex-col z-50">
         <div className="h-20 flex items-center px-8 border-b border-white/5">
           <Link href="/" className="flex items-center">
-            <Ship className="h-6 w-6 mr-3 text-primary" />
+            <Image src="/logo.svg" alt="TradeFlow Logo" width={24} height={24} className="mr-3" />
             <span className="font-black text-lg tracking-tighter uppercase italic">TradeFlow</span>
           </Link>
         </div>

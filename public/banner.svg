@@ -1,0 +1,36 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#050508"/>
+  
+  <!-- Grid Lines -->
+  <path d="M0 100H1200M0 200H1200M0 300H1200M0 400H1200M0 500H1200" stroke="#8E8FD8" stroke-opacity="0.05"/>
+  <path d="M100 0V630M200 0V630M300 0V630M400 0V630M500 0V630M600 0V630M700 0V630M800 0V630M900 0V630M1000 0V630M1100 0V630" stroke="#8E8FD8" stroke-opacity="0.05"/>
+
+  <!-- Gradient Blobs -->
+  <circle cx="200" cy="150" r="300" fill="#8E8FD8" fill-opacity="0.03" filter="url(#filter0_f)"/>
+  <circle cx="1000" cy="480" r="250" fill="#637FD6" fill-opacity="0.03" filter="url(#filter1_f)"/>
+
+  <!-- Logo (Centered) -->
+  <g transform="translate(540, 180) scale(4)">
+    <path d="M16 2L4 7V15C4 21.6 9.1 27.7 16 30C22.9 27.7 28 21.6 28 15V7L16 2Z" stroke="#8E8FD8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8 18C8 18 10 22 16 22C22 22 24 18 24 18" stroke="#8E8FD8" stroke-width="1.5" stroke-linecap="round"/>
+    <path d="M16 10V22" stroke="#8E8FD8" stroke-width="1.5" stroke-linecap="round"/>
+  </g>
+
+  <!-- Text -->
+  <text x="600" y="440" text-anchor="middle" fill="#EFF1F5" font-family="Inter, sans-serif" font-weight="900" font-size="64" letter-spacing="-0.05em" text-transform="uppercase">TRADEFLOW</text>
+  <text x="600" y="490" text-anchor="middle" fill="#8888AA" font-family="Inter, sans-serif" font-weight="500" font-size="24" letter-spacing="0.1em" text-transform="uppercase">Digital Letter of Credit // On Stellar</text>
+
+  <defs>
+    <filter id="filter0_f" x="-200" y="-250" width="800" height="800" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="50" result="effect1_foregroundBlur"/>
+    </filter>
+    <filter id="filter1_f" x="650" y="130" width="700" height="700" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+      <feGaussianBlur stdDeviation="50" result="effect1_foregroundBlur"/>
+    </filter>
+  </defs>
+</svg>

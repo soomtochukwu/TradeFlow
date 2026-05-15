@@ -1,0 +1,13 @@
+<svg width="128" height="128" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer Shield -->
+  <path d="M16 2L4 7V15C4 21.6 9.1 27.7 16 30C22.9 27.7 28 21.6 28 15V7L16 2Z" fill="#0D1017" stroke="#8E8FD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Ship Hull abstraction -->
+  <path d="M8 18C8 18 10 22 16 22C22 22 24 18 24 18" stroke="#8E8FD8" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Vertical Cargo Line -->
+  <path d="M16 10V22" stroke="#8E8FD8" stroke-width="2" stroke-linecap="round"/>
+  
+  <!-- Wave / Growth line -->
+  <path d="M11 14L16 10L21 14" stroke="#8E8FD8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

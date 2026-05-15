@@ -10,19 +10,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useWallet } from "@/providers/WalletProvider";
-import { useChangeMilestoneStatus, useSendTransaction, useGetEscrowsFromIndexerByRole } from "@trustless-work/escrow/hooks";
+import { useChangeMilestoneStatus, useSendTransaction, useGetEscrowsFromIndexerByRole, useStartDispute } from "@trustless-work/escrow/hooks";
 import { Role } from "@trustless-work/escrow";
 import { Networks } from "@creit.tech/stellar-wallets-kit/types";
-import { Loader2, ExternalLink, CheckCircle2 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Loader2, ExternalLink, CheckCircle2, AlertTriangle } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { SetupWalletBanner } from "@/components/SetupWalletBanner";
+import { FileUploader } from "@/components/FileUploader";
+import { toast } from "sonner";
 
 export default function ExporterDashboard() {
   const { address, kit } = useWallet();
+  const queryClient = useQueryClient();
   const { changeMilestoneStatus } = useChangeMilestoneStatus();
   const { sendTransaction } = useSendTransaction();
   const { getEscrowsByRole } = useGetEscrowsFromIndexerByRole();
+  const { startDispute } = useStartDispute();
   
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
+  const [evidenceUrl, setEvidenceUrl] = useState<string>("");
 
   const { data: escrows, isLoading } = useQuery({
     queryKey: ["escrows", "exporter", address],
@@ -36,7 +42,7 @@ export default function ExporterDashboard() {
 
     const formData = new FormData(e.currentTarget);
     const status = formData.get("status") as string;
-    const evidence = formData.get("evidence") as string;
+    const evidence = evidenceUrl;
 
     setIsUpdating(`${contractId}-${milestoneIndex}`);
     try {
@@ -55,18 +61,53 @@ export default function ExporterDashboard() {
       });
 
       await sendTransaction(signedTxXdr);
-      alert("Milestone Status Updated!");
+      toast.success("Status Updated!", {
+        description: "Evidence has been submitted. The inspector will be notified."
+      });
+      
+      setEvidenceUrl(""); // Reset for next use
+      setTimeout(() => queryClient.invalidateQueries({ queryKey: ["escrows"] }), 5000);
     } catch (error) {
       console.error(error);
-      alert("Failed to update status");
+      toast.error("Failed to update status");
     } finally {
       setIsUpdating(null);
+    }
+  };
+
+  const handleStartDispute = async (contractId: string) => {
+    if (!address) return;
+    const confirmed = confirm("Are you sure you want to raise a dispute? This will halt the agreement and alert the arbitrator.");
+    if (!confirmed) return;
+
+    try {
+      const { unsignedTransaction } = await startDispute({
+        contractId,
+        signer: address,
+      }, "multi-release");
+      
+      if (!unsignedTransaction) throw new Error("Failed to get unsigned transaction");
+
+      const { signedTxXdr } = await kit.signTransaction(unsignedTransaction, {
+        networkPassphrase: Networks.TESTNET,
+        address: address,
+      });
+
+      await sendTransaction(signedTxXdr);
+      toast.success("Dispute Raised", {
+        description: "The agreement has been frozen. You will be notified when the arbitrator makes a decision."
+      });
+      setTimeout(() => queryClient.invalidateQueries({ queryKey: ["escrows"] }), 5000);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to raise dispute");
     }
   };
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <SetupWalletBanner />
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Export Shipments</h2>
           <p className="text-muted-foreground">Update milestones and provide evidence for payment release.</p>
@@ -79,16 +120,19 @@ export default function ExporterDashboard() {
             </div>
           ) : escrows && escrows.length > 0 ? (
             escrows.map((escrow: any) => (
-              <Card key={escrow.contractId}>
+              <Card key={escrow.contractId} className={escrow.flags?.disputed ? "border-red-500/20 bg-red-500/5" : ""}>
                 <CardHeader>
                   <div className="flex justify-between items-start">
                     <div>
                       <CardTitle>{escrow.title}</CardTitle>
                       <CardDescription className="font-mono text-xs">{escrow.contractId}</CardDescription>
                     </div>
-                    <Badge variant={escrow.flags?.funded ? "default" : "secondary"}>
-                      {escrow.flags?.funded ? "Funded" : "Unfunded"}
-                    </Badge>
+                    <div className="flex gap-2">
+                       {escrow.flags?.disputed && <Badge variant="destructive">Disputed</Badge>}
+                       <Badge variant={escrow.flags?.funded ? "default" : "secondary"}>
+                         {escrow.flags?.funded ? "Funded" : "Unfunded"}
+                       </Badge>
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
@@ -126,7 +170,7 @@ export default function ExporterDashboard() {
                               )}
                             </TableCell>
                             <TableCell className="text-right">
-                              {!isApproved && (
+                              {!isApproved && !escrow.flags?.disputed && (
                                 <Dialog>
                                   <DialogTrigger render={<Button size="sm" variant="outline" />}>
                                     Update
@@ -142,10 +186,10 @@ export default function ExporterDashboard() {
                                         <Input id="status" name="status" placeholder="e.g. Goods Shipped" defaultValue={milestone.status} required />
                                       </div>
                                       <div className="space-y-2">
-                                        <Label htmlFor="evidence">Evidence URL (IPFS/Cloud)</Label>
-                                        <Input id="evidence" name="evidence" placeholder="https://..." defaultValue={milestone.evidence} required />
+                                        <Label>Proof of Completion (IPFS)</Label>
+                                        <FileUploader onUploadSuccess={(url) => setEvidenceUrl(url)} />
                                       </div>
-                                      <Button type="submit" className="w-full" disabled={isUpdating === `${escrow.contractId}-${idx}`}>
+                                      <Button type="submit" className="w-full" disabled={isUpdating === `${escrow.contractId}-${idx}` || !evidenceUrl}>
                                         {isUpdating === `${escrow.contractId}-${idx}` ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle2 className="mr-2 h-4 w-4" />}
                                         Submit for Approval
                                       </Button>
@@ -159,6 +203,15 @@ export default function ExporterDashboard() {
                       })}
                     </TableBody>
                   </Table>
+                  
+                  {escrow.flags?.funded && !escrow.flags?.disputed && !escrow.flags?.released && (
+                    <div className="mt-6 flex justify-end">
+                      <Button variant="ghost" size="sm" className="text-destructive hover:bg-destructive/10" onClick={() => handleStartDispute(escrow.contractId)}>
+                        <AlertTriangle className="mr-2 h-4 w-4" />
+                        Raise Dispute
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             ))

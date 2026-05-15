@@ -10,20 +10,24 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useWallet } from "@/providers/WalletProvider";
-import { useInitializeEscrow, useSendTransaction, useGetEscrowsFromIndexerByRole, useFundEscrow } from "@trustless-work/escrow/hooks";
+import { useInitializeEscrow, useSendTransaction, useGetEscrowsFromIndexerByRole, useFundEscrow, useStartDispute } from "@trustless-work/escrow/hooks";
 import { Role } from "@trustless-work/escrow";
 import { Networks } from "@creit.tech/stellar-wallets-kit/types";
-import { Plus, Wallet, Loader2, Ship } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
+import { Plus, Wallet, Loader2, Ship, AlertTriangle } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { SetupWalletBanner } from "@/components/SetupWalletBanner";
+import { toast } from "sonner";
 
 const USDC_ISSUER = "GBBD47IF6LWK7P7MDEVSCWR7DPUWV3NY3DTQEVFL4NAT4AQH3ZLLFLA5"; // Testnet USDC
 
 export default function ImporterDashboard() {
   const { address, kit } = useWallet();
+  const queryClient = useQueryClient();
   const { deployEscrow } = useInitializeEscrow();
   const { sendTransaction } = useSendTransaction();
   const { fundEscrow } = useFundEscrow();
   const { getEscrowsByRole } = useGetEscrowsFromIndexerByRole();
+  const { startDispute } = useStartDispute();
   
   const [isDeploying, setIsDeploying] = useState(false);
   const [isFunding, setIsFunding] = useState<string | null>(null);
@@ -42,6 +46,7 @@ export default function ImporterDashboard() {
     const formData = new FormData(e.currentTarget);
     const exporterAddress = formData.get("exporter") as string;
     const inspectorAddress = formData.get("inspector") as string;
+    const arbitratorAddress = formData.get("arbitrator") as string;
     const totalAmount = Number(formData.get("amount"));
 
     try {
@@ -54,7 +59,7 @@ export default function ImporterDashboard() {
           approver: inspectorAddress,
           serviceProvider: exporterAddress,
           releaseSigner: address,
-          disputeResolver: address,
+          disputeResolver: arbitratorAddress || address,
           platformAddress: address,
         },
         platformFee: 0,
@@ -93,10 +98,14 @@ export default function ImporterDashboard() {
       });
 
       await sendTransaction(signedTxXdr);
-      alert("Agreement Deployed Successfully!");
+      toast.success("Agreement Deployed!", {
+        description: "The transaction has been submitted to Stellar. The dashboard will update in a few seconds."
+      });
+      
+      setTimeout(() => queryClient.invalidateQueries({ queryKey: ["escrows"] }), 5000);
     } catch (error) {
       console.error(error);
-      alert("Failed to deploy agreement");
+      toast.error("Failed to deploy agreement");
     } finally {
       setIsDeploying(false);
     }
@@ -119,18 +128,52 @@ export default function ImporterDashboard() {
       });
 
       await sendTransaction(signedTxXdr);
-      alert("Escrow Funded Successfully!");
+      toast.success("Escrow Funded!", {
+        description: "Your USDC has been locked. The status will update shortly."
+      });
+      
+      setTimeout(() => queryClient.invalidateQueries({ queryKey: ["escrows"] }), 5000);
     } catch (error) {
       console.error(error);
-      alert("Failed to fund escrow");
+      toast.error("Failed to fund escrow");
     } finally {
       setIsFunding(null);
+    }
+  };
+
+  const handleStartDispute = async (contractId: string) => {
+    if (!address) return;
+    const confirmed = confirm("Are you sure you want to raise a dispute? This will halt all payments and require legal arbitration.");
+    if (!confirmed) return;
+
+    try {
+      const { unsignedTransaction } = await startDispute({
+        contractId,
+        signer: address,
+      }, "multi-release");
+      
+      if (!unsignedTransaction) throw new Error("Failed to get unsigned transaction");
+
+      const { signedTxXdr } = await kit.signTransaction(unsignedTransaction, {
+        networkPassphrase: Networks.TESTNET,
+        address: address,
+      });
+
+      await sendTransaction(signedTxXdr);
+      toast.success("Dispute Raised", {
+        description: "The agreement has been frozen. An arbitrator will review the case."
+      });
+      setTimeout(() => queryClient.invalidateQueries({ queryKey: ["escrows"] }), 5000);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to raise dispute");
     }
   };
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        <SetupWalletBanner />
         <div className="flex justify-between items-center">
           <div>
             <h2 className="text-2xl font-bold tracking-tight">Active Agreements</h2>
@@ -155,6 +198,10 @@ export default function ImporterDashboard() {
                 <div className="space-y-2">
                   <Label htmlFor="inspector">Inspector Address</Label>
                   <Input id="inspector" name="inspector" placeholder="G..." required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="arbitrator">Arbitrator Address (Optional)</Label>
+                  <Input id="arbitrator" name="arbitrator" placeholder="G... (Defaults to you)" />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="amount">Total Amount (USDC)</Label>
@@ -190,6 +237,7 @@ export default function ImporterDashboard() {
                   {escrows.map((escrow: any) => {
                      const totalAmount = escrow.milestones.reduce((acc: number, m: any) => acc + (m.amount || 0), 0);
                      const isFunded = escrow.flags?.funded;
+                     const isDisputed = escrow.flags?.disputed;
                      return (
                       <TableRow key={escrow.contractId}>
                         <TableCell>
@@ -201,21 +249,37 @@ export default function ImporterDashboard() {
                         </TableCell>
                         <TableCell>{totalAmount} USDC</TableCell>
                         <TableCell>
-                          <Badge className={isFunded ? "bg-green-100 text-green-800" : ""}>
-                            {isFunded ? "Funded" : "Pending Funding"}
-                          </Badge>
+                          {isDisputed ? (
+                            <Badge variant="destructive">Disputed</Badge>
+                          ) : (
+                            <Badge className={isFunded ? "bg-green-100 text-green-800" : ""}>
+                              {isFunded ? "Funded" : "Pending Funding"}
+                            </Badge>
+                          )}
                         </TableCell>
                         <TableCell className="text-right">
-                          {!isFunded && (
-                            <Button 
-                              size="sm" 
-                              onClick={() => handleFund(escrow.contractId, totalAmount)}
-                              disabled={isFunding === escrow.contractId}
-                            >
-                              {isFunding === escrow.contractId ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="mr-2 h-4 w-4" />}
-                              Fund
-                            </Button>
-                          )}
+                          <div className="flex justify-end gap-2">
+                            {!isFunded && (
+                              <Button 
+                                size="sm" 
+                                onClick={() => handleFund(escrow.contractId, totalAmount)}
+                                disabled={isFunding === escrow.contractId}
+                              >
+                                {isFunding === escrow.contractId ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wallet className="mr-2 h-4 w-4" />}
+                                Fund
+                              </Button>
+                            )}
+                            {isFunded && !isDisputed && !escrow.flags?.released && (
+                              <Button 
+                                size="sm" 
+                                variant="destructive"
+                                onClick={() => handleStartDispute(escrow.contractId)}
+                              >
+                                <AlertTriangle className="mr-2 h-4 w-4" />
+                                Dispute
+                              </Button>
+                            )}
+                          </div>
                         </TableCell>
                       </TableRow>
                     );

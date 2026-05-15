@@ -5,8 +5,9 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { useWallet } from "@/providers/WalletProvider";
-import { ShieldCheck, Ship, Landmark, ArrowRight, Globe, Zap, Lock } from "lucide-react";
+import { ShieldCheck, Landmark, ArrowRight, Globe, Zap, Lock, Ship, Gavel } from "lucide-react";
 import { useRef } from "react";
+import Image from "next/image";
 
 export default function LandingPage() {
   const { address, connect } = useWallet();
@@ -30,7 +31,7 @@ export default function LandingPage() {
       {/* Header */}
       <header className="fixed top-0 w-full z-50 h-20 flex items-center px-6 md:px-12 glass-dark">
         <Link href="/" className="flex items-center">
-          <Ship className="h-8 w-8 mr-3 text-primary animate-pulse" />
+          <Image src="/logo.svg" alt="TradeFlow Logo" width={32} height={32} className="mr-3" />
           <span className="font-black text-2xl tracking-tighter uppercase italic">TradeFlow</span>
         </Link>
         <nav className="ml-auto flex gap-6 items-center">
@@ -39,9 +40,11 @@ export default function LandingPage() {
               <span className="text-sm font-mono text-muted-foreground hidden md:inline-block">
                 {address.slice(0, 6)}...{address.slice(-4)}
               </span>
-              <Button className="glow-primary hover:scale-105 transition-transform" size="sm">
-                Dashboard
-              </Button>
+              <Link href="/importer">
+                <Button className="glow-primary hover:scale-105 transition-transform" size="sm">
+                  Dashboard
+                </Button>
+              </Link>
             </div>
           ) : (
             <Button onClick={connect} className="glow-primary rounded-full px-8" size="sm">
@@ -114,11 +117,11 @@ export default function LandingPage() {
         <section className="py-32 relative">
           <div className="container px-4 md:px-6 mx-auto">
             <div className="mb-20 text-center">
-              <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 uppercase">Three Pillars of Trust</h2>
-              <p className="text-muted-foreground font-medium">Synchronized roles ensuring absolute trade integrity.</p>
+              <h2 className="text-4xl md:text-5xl font-black tracking-tighter mb-4 uppercase text-gradient">The Ecosystem</h2>
+              <p className="text-muted-foreground font-medium uppercase tracking-widest text-sm">Four Pillars of Synchronized Trade</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 {
                   role: "Importer",
@@ -140,25 +143,32 @@ export default function LandingPage() {
                   icon: ShieldCheck,
                   color: "text-purple-400",
                   href: "/inspector"
+                },
+                {
+                  role: "Arbitrator",
+                  desc: "Legal resolution. Review contested agreements and distribute capital based on judgment.",
+                  icon: Gavel,
+                  color: "text-red-400",
+                  href: "/arbitrator"
                 }
               ].map((role, i) => (
                 <motion.div
                   key={i}
-                  initial={{ opacity: 0, x: i === 0 ? -20 : i === 2 ? 20 : 0, y: 20 }}
-                  whileInView={{ opacity: 1, x: 0, y: 0 }}
-                  transition={{ delay: i * 0.2 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.15 }}
                 >
                   <Card className="glass h-full hover:border-primary/50 transition-all group overflow-hidden border-white/5">
-                    <CardHeader className="p-8">
-                      <role.icon className={`h-12 w-12 mb-6 ${role.color} group-hover:scale-110 transition-transform`} />
-                      <CardTitle className="text-2xl font-black uppercase italic tracking-tighter">{role.role}</CardTitle>
-                      <CardDescription className="text-muted-foreground text-sm font-medium leading-relaxed mt-4">
+                    <CardHeader className="p-6">
+                      <role.icon className={`h-10 w-10 mb-4 ${role.color} group-hover:scale-110 transition-transform`} />
+                      <CardTitle className="text-xl font-black uppercase italic tracking-tighter">{role.role}</CardTitle>
+                      <CardDescription className="text-muted-foreground text-xs font-medium leading-relaxed mt-2">
                         {role.desc}
                       </CardDescription>
                     </CardHeader>
-                    <CardContent className="p-8 pt-0">
-                      <Button render={<Link href={role.href} />} variant="link" className="px-0 text-primary font-bold uppercase tracking-tighter">
-                        Enter Console <ArrowRight className="ml-2 h-4 w-4" />
+                    <CardContent className="p-6 pt-0">
+                      <Button render={<Link href={role.href} />} variant="link" className="px-0 text-primary font-bold uppercase tracking-tighter text-xs">
+                        Enter Console <ArrowRight className="ml-2 h-3 w-3" />
                       </Button>
                     </CardContent>
                   </Card>
@@ -173,8 +183,8 @@ export default function LandingPage() {
       <footer className="py-12 px-6 md:px-12 border-t border-white/5 glass-dark">
         <div className="flex flex-col md:flex-row justify-between items-center gap-8">
           <div className="flex items-center">
-            <Ship className="h-6 w-6 mr-2 text-primary" />
-            <span className="font-bold text-lg tracking-tighter uppercase italic">TradeFlow</span>
+            <Image src="/logo.svg" alt="TradeFlow Logo" width={24} height={24} className="mr-2 opacity-80" />
+            <span className="font-bold text-lg tracking-tighter uppercase italic text-muted-foreground">TradeFlow</span>
           </div>
           <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
             © 2026 TradeFlow // Engineered for Boundless
