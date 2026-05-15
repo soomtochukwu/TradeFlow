@@ -18,8 +18,37 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TradeFlow - Cross-Border Trade Finance",
-  description: "Digital Letter of Credit using Trustless Work on Stellar",
+  title: {
+    default: "TradeFlow | On-Chain Trade Finance",
+    template: "%s | TradeFlow"
+  },
+  description: "Secure global commerce with digital Letters of Credit. Non-custodial, milestone-based escrow powered by Trustless Work on Stellar.",
+  metadataBase: new URL("https://tradeflow.finance"), // Replace with actual URL if known
+  openGraph: {
+    title: "TradeFlow | On-Chain Trade Finance",
+    description: "Digital Letter of Credit using Trustless Work on Stellar. Bridging the trust gap in international trade.",
+    url: "https://tradeflow.finance",
+    siteName: "TradeFlow",
+    images: [
+      {
+        url: "/banner.svg",
+        width: 1200,
+        height: 630,
+        alt: "TradeFlow - Secure Global Commerce",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TradeFlow | On-Chain Trade Finance",
+    description: "Secure global commerce with digital Letters of Credit on Stellar.",
+    images: ["/banner.svg"],
+  },
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
