@@ -1,4 +1,4 @@
-# 🚢 TradeFlow
+# TradeFlow
 
 **TradeFlow** is a decentralized, enterprise-grade **Trade Finance (TradeFi)** platform built on the **Stellar** network. It digitizes the traditional "Letter of Credit" (LoC) using non-custodial, milestone-based escrow to bridge the global trust gap between importers and exporters.
 
@@ -7,27 +7,32 @@
 
 ---
 
-## 🌊 Key Features
+## Key Features
 
 ### On-Chain Letter of Credit
+
 TradeFlow replaces paper-heavy banking processes with **Multi-Release Escrow**. Funds are locked in a smart contract and only released to the exporter as real-world milestones (Production, Logistics, Delivery) are verified.
 
 ### Four-Pillar Ecosystem
+
 Specialized consoles for every participant in the trade lifecycle:
+
 - **Importer Dashboard**: Initiate agreements, configure milestones, and fund escrows with USDC.
 - **Exporter Dashboard**: Update shipment status and provide decentralized evidence (IPFS).
 - **Inspector Dashboard**: The "Trust Bridge" that verifies documents and approves payouts.
 - **Arbitrator Console**: A legal resolution layer to resolve disputes and distribute capital fairly.
 
 ### Decentralized Evidence (IPFS)
+
 Proof of work and shipping documents (Bills of Lading, Receipts) are pinned permanently to **IPFS via Pinata**, ensuring immutable records for auditors and inspectors.
 
 ### Futuristic "New(ai)ve" UX
+
 A premium, dark-mode interface designed for high-stakes enterprise finance. Featuring scroll-driven storytelling, glassmorphism, and real-time on-chain data synchronization.
 
 ---
 
-## 🛠️ Technical Stack
+## Technical Stack
 
 - **Framework**: Next.js 14 (App Router)
 - **Blockchain**: Stellar (Soroban Smart Contracts)
@@ -39,7 +44,7 @@ A premium, dark-mode interface designed for high-stakes enterprise finance. Feat
 
 ---
 
-## 🚀 Getting Started
+## Getting Started
 
 ### **1. Environment Setup**
 
@@ -65,7 +70,7 @@ The project includes a rendered programmatic demo video. You can find it at:
 
 ---
 
-## ⚖️ Dispute Resolution
+## Dispute Resolution
 
 In the event of a conflict, either party can "Raise a Dispute" to freeze the escrow. An assigned **Arbitrator** reviews the IPFS evidence and issues a final judgment on-chain, distributing the locked USDC between the importer and exporter based on the work completed.
 
