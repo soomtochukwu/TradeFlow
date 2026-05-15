@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Ship, ArrowLeft, Code2, ShieldCheck, Database, Cpu, Layers, Globe, Gavel } from "lucide-react";
+import { Ship, ArrowLeft, Code2, ShieldCheck, Database, Cpu, Layers, Globe, Gavel, Box, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -33,11 +33,28 @@ export default function TechnicalOverview() {
           {/* Hero Section */}
           <section>
             <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic mb-6">
-              Protocol <span className="text-gradient">Architecture</span>
+              Protocol <span className="text-gradient">Integrator</span>
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed font-medium">
-              TradeFlow is an enterprise-grade middleware built on top of the Stellar network, utilizing the Trustless Work protocol to digitize high-value trade finance instruments.
+              TradeFlow is not just an application; it is a **Protocol Integrator**. We leverage enterprise-grade, pre-audited smart contract primitives to deliver institutional security without the overhead of custom contract development.
             </p>
+          </section>
+
+          {/* Infrastructure Section */}
+          <section className="space-y-8 pt-6">
+            <h2 className="text-3xl font-black uppercase italic tracking-tighter border-l-4 border-primary pl-6">Core Infrastructure</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <TechCard 
+                  icon={Box}
+                  title="Audited Primitives"
+                  description="By using the Trustless Work 'Factory' contracts, TradeFlow utilizes standardized Multi-Release logic that has been rigorously tested for security and performance."
+                />
+                <TechCard 
+                  icon={Lock}
+                  title="Non-Custodial"
+                  description="Business logic is enforced by the Stellar network. TradeFlow never holds private keys or has direct custody of capital; we only facilitate user-signed XDRs."
+                />
+            </div>
           </section>
 
           {/* Core Tech Stack */}
@@ -45,65 +62,65 @@ export default function TechnicalOverview() {
             <TechCard 
               icon={Cpu}
               title="Stellar / Soroban"
-              description="The foundational layer for transaction finality (< 5s) and low-cost execution. All business logic is enforced by WASM-based smart contracts."
+              description="The foundational layer for transaction finality (< 5s) and low-cost execution. Business logic is executed in a WASM-based virtual machine."
             />
             <TechCard 
               icon={Layers}
               title="Trustless Work SDK"
-              description="Utilizes the Multi-Release primitive to handle phased risk mitigation. Capital is locked on-chain and released only via cryptographic signatures."
+              description="The interface layer for the Multi-Release primitive. Capital is released only upon cryptographic proof from authorized approvers."
             />
             <TechCard 
               icon={Database}
               title="IPFS (Pinata)"
-              description="Decentralized storage for non-fungible evidence. Bills of Lading and Warehouse Receipts are pinned to IPFS and linked to the contract state via CIDs."
+              description="Decentralized storage for trade evidence. Bills of Lading and Receipts are pinned to IPFS and linked to on-chain state via CIDs."
             />
             <TechCard 
               icon={Code2}
               title="Next.js 14"
-              description="A high-performance frontend framework using React Query for optimistic data syncing and Framer Motion for immersive UX."
+              description="Real-time on-chain data synchronization using React Query to manage the 5-second Stellar indexing latency."
             />
           </section>
 
           {/* The Lifecycle */}
           <section className="space-y-8 pt-12">
-            <h2 className="text-3xl font-black uppercase italic tracking-tighter border-l-4 border-primary pl-6">The Escrow Lifecycle</h2>
+            <h2 className="text-3xl font-black uppercase italic tracking-tighter border-l-4 border-primary pl-6">Smart Configuration Lifecycle</h2>
+            <p className="text-muted-foreground font-medium">
+                Instead of coding a new contract for every trade, TradeFlow **configures** a specialized instance of the Multi-Release primitive.
+            </p>
             <div className="space-y-8 relative">
               <LifecycleItem 
                 step="1"
-                title="Contract Initiation"
-                details="The Importer deploys a Multi-Release Escrow contract. They define the Service Provider (Exporter), the Approver (Inspector), and the Dispute Resolver (Arbitrator)."
+                title="Primitive Deployment"
+                details="A new instance of the audited Multi-Release contract is deployed via the Trustless Work Factory. All roles (Importer, Exporter, Inspector) are cryptographically bound at this stage."
               />
               <LifecycleItem 
                 step="2"
                 title="Capital Funding"
-                details="Capital (USDC) is transferred from the Importer's wallet to the smart contract. The agreement is now frozen and globally verifiable."
+                details="Funds are transferred to the non-custodial contract address. The Stellar ledger now enforces the rules of the agreement autonomously."
               />
               <LifecycleItem 
                 step="3"
-                title="Milestone Execution"
-                details="The Exporter hits production/logistics milestones. For each, they submit a status update and a CID pointing to their proof of work on IPFS."
+                title="Proof Upload"
+                details="Evidence of shipment is hashed and uploaded to IPFS. The resulting CID is submitted as part of a state-update transaction to the contract."
               />
               <LifecycleItem 
                 step="4"
-                title="Cryptographic Approval"
-                details="The Inspector verifies the physical goods and digital documents. Their signature on-chain triggers the smart contract to release specific milestone funds."
+                title="Consensus Approval"
+                details="The designated Approver (Inspector) signs a transaction. The contract verifies this signature against the authorized role and releases funds to the Exporter."
               />
             </div>
           </section>
 
           {/* Security & Roles */}
           <section className="space-y-8 pt-12">
-             <h2 className="text-3xl font-black uppercase italic tracking-tighter border-l-4 border-primary pl-6">Roles & RBAC</h2>
-             <p className="text-muted-foreground font-medium">
-               TradeFlow uses strict Role-Based Access Control (RBAC) at the smart contract level. Only the addresses defined during initiation have authority to move funds or update states.
-             </p>
+             <h2 className="text-3xl font-black uppercase italic tracking-tighter border-l-4 border-primary pl-6">Security Model</h2>
              <div className="p-8 rounded-2xl glass border-white/5 space-y-4">
                 <div className="flex items-start gap-4">
                   <ShieldCheck className="h-6 w-6 text-primary shrink-0 mt-1" />
                   <div>
-                    <span className="font-bold uppercase tracking-widest text-xs text-primary">Principle of Least Privilege</span>
-                    <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                      The Platform (TradeFlow) never has custody of user funds. We only facilitate the creation of the unsigned XDRs (Stellar transactions) that the users must sign with their private keys via specialized wallet modules (Freighter, Albedo).
+                    <span className="font-bold uppercase tracking-widest text-xs text-primary">Trustless Execution</span>
+                    <p className="text-sm text-muted-foreground mt-2 leading-relaxed font-sans">
+                      The core 'Law' of the trade is enforced by the Stellar Consensus Protocol. TradeFlow act as the 'Legal Clerk', drafting the paperwork (Transactions) for the parties to sign. This ensures that no single entity—including TradeFlow—can move funds without authorization.
                     </p>
                   </div>
                 </div>
@@ -112,14 +129,11 @@ export default function TechnicalOverview() {
 
           {/* Dispute Mechanism */}
           <section className="space-y-8 pt-12">
-             <h2 className="text-3xl font-black uppercase italic tracking-tighter border-l-4 border-primary pl-6">Dispute Resolution</h2>
-             <p className="text-muted-foreground font-medium">
-               Trade Finance is complex. When verification fails, the 'Halt' mechanism allows any party to freeze the agreement.
-             </p>
+             <h2 className="text-3xl font-black uppercase italic tracking-tighter border-l-4 border-primary pl-6">Arbitration Layer</h2>
              <div className="p-6 rounded-xl bg-red-500/5 border border-red-500/10 flex items-center gap-6">
                 <Gavel className="h-12 w-12 text-red-500 opacity-50 shrink-0" />
-                <p className="text-sm italic">
-                  "The Arbitrator acts as an on-chain judge. They can manually distribute the locked USDC between the parties based on a legal review of the IPFS evidence logs."
+                <p className="text-sm italic font-sans leading-relaxed">
+                  "In the event of a conflict, the contract primitive allows for a 'Halt' state. A neutral Arbitrator reviews the IPFS proof logs and distributes the capital through an on-chain resolution transaction."
                 </p>
              </div>
           </section>
@@ -144,7 +158,7 @@ function TechCard({ icon: Icon, title, description }: any) {
     <div className="p-6 rounded-2xl glass border-white/5 hover:border-primary/20 transition-all group">
       <Icon className="h-8 w-8 text-primary mb-4 group-hover:scale-110 transition-transform" />
       <h3 className="font-black uppercase italic tracking-tighter text-lg mb-2">{title}</h3>
-      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+      <p className="text-sm text-muted-foreground leading-relaxed font-sans">{description}</p>
     </div>
   );
 }
@@ -152,11 +166,11 @@ function TechCard({ icon: Icon, title, description }: any) {
 function LifecycleItem({ step, title, details }: any) {
   return (
     <div className="relative pl-16 pb-4">
-      <div className="absolute left-0 top-0 h-10 w-10 rounded-full border border-primary/30 flex items-center justify-center font-black italic text-primary bg-[#050508] z-10">
+      <div className="absolute left-0 top-0 h-10 w-10 rounded-full border border-primary/30 flex items-center justify-center font-black italic text-primary bg-[#050508] z-10 font-sans">
         {step}
       </div>
-      <h4 className="text-xl font-bold mb-2 uppercase tracking-tight">{title}</h4>
-      <p className="text-muted-foreground text-sm leading-relaxed">{details}</p>
+      <h4 className="text-xl font-bold mb-2 uppercase tracking-tight italic">{title}</h4>
+      <p className="text-muted-foreground text-sm leading-relaxed font-sans">{details}</p>
     </div>
   );
 }

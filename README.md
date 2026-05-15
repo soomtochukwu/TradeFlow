@@ -10,8 +10,11 @@
 ## Key Features
 
 ### On-Chain Letter of Credit
+TradeFlow replaces paper-heavy banking processes with **Trustless Work Smart Contract Primitives**. By utilizing pre-audited, non-custodial Multi-Release Escrow logic on Stellar, we ensure institutional-grade security without the risk of custom contract vulnerabilities.
 
-TradeFlow replaces paper-heavy banking processes with **Multi-Release Escrow**. Funds are locked in a smart contract and only released to the exporter as real-world milestones (Production, Logistics, Delivery) are verified.
+### Protocol-First Architecture
+TradeFlow is a **Protocol Integrator**. We leverage the robust infrastructure of **Stellar (Soroban)** and the proven logic of the **Trustless Work** protocol to handle complex, phased risk mitigation through simple, cryptographically-secured configuration.
+
 
 ### Four-Pillar Ecosystem
 
