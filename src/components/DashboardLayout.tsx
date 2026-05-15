@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useWallet } from "@/providers/WalletProvider";
-import { LayoutDashboard, Settings, LogOut, ChevronRight } from "lucide-react";
+import { LayoutDashboard, Settings, LogOut, ChevronRight, Book } from "lucide-react";
+
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
@@ -14,6 +15,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const navItems = [
     { label: "Overview", href: pathname.split('/').slice(0, 2).join('/') || "/", icon: LayoutDashboard },
+    { label: "Technical Docs", href: "/docs", icon: Book },
     { label: "Settings", href: "#", icon: Settings },
   ];
 

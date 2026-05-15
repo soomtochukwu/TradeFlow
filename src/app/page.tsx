@@ -229,6 +229,7 @@ export default function LandingPage() {
             © 2026 TradeFlow // Built for Boundless
           </p>
           <div className="flex gap-6">
+            <Link className="text-[10px] uppercase tracking-widest font-bold hover:text-primary transition-colors" href="/docs">Technical Overview</Link>
             <Link className="text-[10px] uppercase tracking-widest font-bold hover:text-primary transition-colors" href="#">Twitter</Link>
             <Link className="text-[10px] uppercase tracking-widest font-bold hover:text-primary transition-colors" href="#">Github</Link>
           </div>
