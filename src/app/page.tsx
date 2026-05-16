@@ -5,7 +5,7 @@ import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { useWallet } from "@/providers/WalletProvider";
-import { ShieldCheck, Landmark, ArrowRight, Globe, Zap, Lock, Ship, Gavel, CheckCircle2, FileSearch, Coins, Scale } from "lucide-react";
+import { ShieldCheck, Landmark, ArrowRight, Globe, Zap, Lock, Ship, Gavel, CheckCircle2, FileSearch, Coins, Scale, PlayCircle } from "lucide-react";
 import { useRef } from "react";
 import Image from "next/image";
 
@@ -148,6 +148,46 @@ export default function LandingPage() {
                    />
                 </div>
              </div>
+          </div>
+        </section>
+
+        {/* Watch Demo Section */}
+        <section className="py-32 border-t border-white/5 relative">
+          <div className="container px-4 md:px-6 mx-auto">
+            <div className="mb-16 text-center">
+              <Badge variant="outline" className="mb-4 px-4 py-1 border-primary/30 text-primary/70 uppercase tracking-[0.2em] text-[9px] font-bold">
+                <PlayCircle className="h-3 w-3 mr-2 inline" />
+                Watch Demo
+              </Badge>
+              <h2 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic">
+                See TradeFlow <span className="text-gradient">in Motion</span>
+              </h2>
+              <p className="text-muted-foreground mt-4 font-medium max-w-xl mx-auto">
+                A two-minute walkthrough of how importers, exporters, inspectors, and arbitrators move capital and evidence through the protocol.
+              </p>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              className="relative max-w-5xl mx-auto"
+            >
+              <div className="absolute -inset-px rounded-2xl bg-gradient-to-br from-primary/40 via-secondary/20 to-transparent blur-2xl opacity-60" />
+              <div className="relative rounded-2xl overflow-hidden border border-white/10 glass-dark glow-primary">
+                <div className="relative aspect-video w-full">
+                  <iframe
+                    className="absolute inset-0 h-full w-full"
+                    src="https://www.youtube-nocookie.com/embed/NTD1JH9FAtw?rel=0&modestbranding=1"
+                    title="TradeFlow Demo"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerPolicy="strict-origin-when-cross-origin"
+                    allowFullScreen
+                  />
+                </div>
+              </div>
+            </motion.div>
           </div>
         </section>
 
